@@ -7,12 +7,13 @@
 
 class Tower{
   constructor(x,y,damage,ability,bulletSpeed,firespeed,range){
-    this.x = x
-    this.y = y
-    this.bulletSpeed= bulletSpeed
-    this. damage = damage
-    this.firespeed = firespeed
-    this.ability= ability
+    this.x = x;
+    this.y = y;
+    this.bulletSpeed= bulletSpeed;
+    this. damage = damage;
+    this.firespeed = firespeed;
+    this.ability= ability;
+    this.range = range;
   }
   target(){//decides what enemy to shoot at and prompts the shoot
 
@@ -20,32 +21,55 @@ class Tower{
   shoot(){//shoots bullet(creates a new bullet object)
 
   }
+  display(){
 
   }
 
-  class Bullet{
-    constructor(x,y,speed,damage,range){
-      this.x = x
-      this.y = y
-      this.spped = speed
-      this.damage = damage
+}
 
-    }
+class Bullet{
+  constructor(xi,yi,xf,yf,speed,damage,range){
+    this.startx = xi;
+    this.starty = yi;
+    this.finalx = xf;
+    this.finaly = yf;
+    this.spped = speed;
+    this.damage = damage;
+    this.range = range;
+  }
+  move(){//moves bullet
+
+  }
+  collide(){//checks to see if bullet collides with an enemy 
+
+  }
+  outOfRange(){//checks to see if the bullet has reached the end of the range 
+    
+  }
+  display(){
+    
+  }
+}
+
+class Enemy{
+  constructor(x,y,movementSpeed, health,damge){
+    this.x = x;
+    this.y = y;
+    this.movementSpeed = movementSpeed;
+    this.health = health;
+    this.damage;
   }
 
-  class Enemy{
-    constructor(x,y,movementSpeed, health,damge){
-      this.x = x
-      this.y = y
-      this.movementSpeed = movementSpeed
-      this.health = health
-      this.damage
-    }
+  move(){//moves and turns each enemy
 
-    move(){//moves and turns each enemy
-
-    }
   }
+  death(){//deletes enemy 
+
+  }
+  display(){
+    
+  }
+}
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -53,6 +77,4 @@ function setup() {
 
 function draw() {
   background(220);
-  fill("black")
-  circle(10,10,10)
 }
