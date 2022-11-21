@@ -2,7 +2,7 @@
 
 tower defense 
 
-## Needs to hvae list
+## Needs to have list
 5 levels
 10 different enemies (knights)
 10 towers (dragons)
@@ -16,6 +16,7 @@ title and end screens
 3) animations 
 4) enemis with abilies
 5) more complex targeting 
+
 
 
 

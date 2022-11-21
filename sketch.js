@@ -1,12 +1,16 @@
-// Project Title
-// Your Name
-// Date
+// tower defense(dragons and knihgts)
+// b3ns2005
+// date
 //
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
+//p5.play
+let towerAR = [];
+let bulletAR = [];
+let enemyAR= [];
 
 class Tower{
-  constructor(x,y,damage,ability,bulletSpeed,firespeed,range){
+  constructor(x,y,damage,ability,bulletSpeed,firespeed,range,color){
     this.x = x;
     this.y = y;
     this.bulletSpeed= bulletSpeed;
@@ -14,6 +18,8 @@ class Tower{
     this.firespeed = firespeed;
     this.ability= ability;
     this.range = range;
+    //this.imagefile = imagefile
+    this.color = color;
   }
   target(){//decides what enemy to shoot at and prompts the shoot
 
@@ -22,15 +28,17 @@ class Tower{
 
   }
   display(){
-
+    //image(this.imagefile,this.x,this.y)
+    fill(color);
+    circle(this.x,this.y,10);
   }
 
 }
 
 class Bullet{
-  constructor(xi,yi,xf,yf,speed,damage,range){
-    this.startx = xi;
-    this.starty = yi;
+  constructor(x,y,xf,yf,speed,damage,range){
+    this.x = x;
+    this.y = y;
     this.finalx = xf;
     this.finaly = yf;
     this.spped = speed;
@@ -47,27 +55,44 @@ class Bullet{
     
   }
   display(){
-    
+    fill("black");
+    circle(this.x,this.y,5);
   }
 }
 
 class Enemy{
-  constructor(x,y,movementSpeed, health,damage){
+  constructor(x,y,movementSpeed,health,damage,direction){
     this.x = x;
     this.y = y;
     this.movementSpeed = movementSpeed;
     this.health = health;
-    this.damage;
+    this.damage = damage;
+    this.direction = direction;
   }
 
   move(){//moves and turns each enemy
+    if (this.direction === "up"){
+      this.y -= this.movementSpeed;
+    }
+    else if(this.direction === "down"){
+      this.y += this.movementSpeed;
+    }
+    else if (this.direction === "right"){
+      this.x += this.movementSpeed;
+    }
+    else if(this.direction === "left"){
+      this.x -= this.movementSpeed;
+    }
+  }
+  switchDirection(){//switches direction when hit a wall
 
   }
   death(){//deletes enemy 
 
   }
   display(){
-    
+    fill("red");
+    circle(this.x,this.y,10);
   }
 }
 
@@ -77,4 +102,12 @@ function setup() {
 
 function draw() {
   background(220);
+
+}
+
+function update(){
+  for (let i = towerAR.length; i>0; i--){
+    towerAR[i].display();
+  } 
+ 
 }
