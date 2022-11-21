@@ -52,7 +52,7 @@ class Bullet{
 }
 
 class Enemy{
-  constructor(x,y,movementSpeed, health,damge){
+  constructor(x,y,movementSpeed, health,damage){
     this.x = x;
     this.y = y;
     this.movementSpeed = movementSpeed;

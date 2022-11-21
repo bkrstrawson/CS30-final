@@ -5,14 +5,19 @@ tower defense
 ## Needs to hvae list
 5 levels
 10 different enemies (knights)
-10 towers with dif abilities(dragons)
+10 towers (dragons)
 all towers target first enemy they can reach
 shop that upgrades damage and fire speed
+title and end screens
 
 ## Nice to have list 
-shop that adds abilities 
-enemis with abilies
-more complex targetting 
+1) towers with abilties 
+2) theme
+3) animations 
+4) enemis with abilies
+5) more complex targeting 
+
+
 
 
 
