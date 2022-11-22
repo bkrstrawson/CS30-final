@@ -8,6 +8,7 @@
 let towerAR = [];
 let bulletAR = [];
 let enemyAR= [];
+let bullet;
 
 class Tower{
   constructor(x,y,damage,ability,bulletSpeed,firespeed,range,color){
@@ -98,16 +99,24 @@ class Enemy{
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+   
 }
 
 function draw() {
   background(220);
-
+  update();
 }
 
 function update(){
   for (let i = towerAR.length; i>0; i--){
     towerAR[i].display();
   } 
- 
+  for (let i = bulletAR.length; i >0; i--){
+    bulletAR[i].display();
+    bulletAR[i].move();
+  }
+  for (let i = enemyAR.length; i >0; i--){
+    enemyAR[1].display();
+    enemyAR[1].move();
+  }
 }
