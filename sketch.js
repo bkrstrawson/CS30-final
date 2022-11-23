@@ -99,7 +99,13 @@ class Enemy{
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-   
+  bullet = new Sprite(); 
+  bullet.height = 50
+  bullet.width = 50
+  
+}
+function mousePressed(){
+  bullet.moveTo(mouseX,mouseY,3)
 }
 
 function draw() {
@@ -116,7 +122,7 @@ function update(){
     bulletAR[i].move();
   }
   for (let i = enemyAR.length; i >0; i--){
-    enemyAR[1].display();
-    enemyAR[1].move();
+    enemyAR[i].display();
+    enemyAR[i].move();
   }
 }

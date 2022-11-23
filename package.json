@@ -47,6 +47,8 @@
       "no-unused-vars": "off"
     },
     "globals": {
+      "mouse":true,
+      "Sprite":true,
       "width": true,
       "height": true,
       "drawingContext": true,
@@ -482,7 +484,8 @@
     }
   },
   "dependencies": {
-    "p5.play": "^3.2.14",
-    "planck": "^1.0.0-alpha.4"
+    "p5.play": "^3.2.15",
+    "planck": "^1.0.0-alpha.4",
+    "planck-js": "^0.3.31"
   }
 }
