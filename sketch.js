@@ -17,17 +17,31 @@ class Tower{
     this.bulletSpeed= bulletSpeed;
     this. damage = damage;
     this.firespeed = firespeed;
+    this.coolDown = 0
     this.ability= ability;
     this.range = range;
     //this.imagefile = imagefile
     this.color = color;
+    this.targetX;
+    this.targetY;
   }
+
   target(){//decides what enemy to shoot at and prompts the shoot
-
+    let targetprogress;
+    let target;
+    for(let i = enemyAR.length; i >0; i--){
+      
+      if (targetprogress < enemyAR[i].Progress){
+        targetprogress = enemyAR[i].Progress;
+        target = i;
+      }
+    }
+    this.targetX = enemyAR[target].X();
+    this.targetY = enemyAR[target].Y();
   }
-  shoot(){//shoots bullet(creates a new bullet object)
-
-  }
+  shoot(){//shoots bullet(creates a new bullet sprite)
+    
+  } 
   display(){
     //image(this.imagefile,this.x,this.y)
     fill(color);
@@ -36,30 +50,7 @@ class Tower{
 
 }
 
-class Bullet{
-  constructor(x,y,xf,yf,speed,damage,range){
-    this.x = x;
-    this.y = y;
-    this.finalx = xf;
-    this.finaly = yf;
-    this.spped = speed;
-    this.damage = damage;
-    this.range = range;
-  }
-  move(){//moves bullet
 
-  }
-  collide(){//checks to see if bullet collides with an enemy 
-
-  }
-  outOfRange(){//checks to see if the bullet has reached the end of the range 
-    
-  }
-  display(){
-    fill("black");
-    circle(this.x,this.y,5);
-  }
-}
 
 class Enemy{
   constructor(x,y,movementSpeed,health,damage,direction){
@@ -69,6 +60,7 @@ class Enemy{
     this.health = health;
     this.damage = damage;
     this.direction = direction;
+    this.progress = 0;
   }
 
   move(){//moves and turns each enemy
@@ -84,6 +76,10 @@ class Enemy{
     else if(this.direction === "left"){
       this.x -= this.movementSpeed;
     }
+    this.progress += this.movementSpeed;
+  }
+  Progress(){
+    return this.progress;
   }
   switchDirection(){//switches direction when hit a wall
 
@@ -95,17 +91,23 @@ class Enemy{
     fill("red");
     circle(this.x,this.y,10);
   }
+  X(){
+    return this.x;
+  }
+  Y(){
+    return this.y;
+  }
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   bullet = new Sprite(); 
-  bullet.height = 50
-  bullet.width = 50
+  bullet.height = 50;
+  bullet.width = 50;
   
 }
 function mousePressed(){
-  bullet.moveTo(mouseX,mouseY,3)
+  bullet.moveTo(mouseX,mouseY,3);
 }
 
 function draw() {
@@ -125,4 +127,10 @@ function update(){
     enemyAR[i].display();
     enemyAR[i].move();
   }
+}
+
+function trig(x1,y1,x2,y2){
+  let x = abs(x2-x1)
+  let y = abs(y2-y1)
+  let distance = x*x + y*y 
 }
