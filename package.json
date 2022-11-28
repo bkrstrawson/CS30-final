@@ -47,6 +47,7 @@
       "no-unused-vars": "off"
     },
     "globals": {
+      "moveTO":true,
       "mouse":true,
       "Sprite":true,
       "width": true,
