@@ -50,7 +50,7 @@ class Tower{
       }
       else{
         this.coolDown = this.firespeed;
-        bullet =new Sprite(this.x,this.y,10,"static");
+        bullet =new Sprite(this.x,this.y,10,"kinematics");
         bullet.moveTO(this.targetX,this.targetY,this.bulletSpeed);
         bulletAR.push(bullet);
       }
@@ -69,29 +69,35 @@ class Tower{
 
 class Enemy{
   constructor(x,y,movementSpeed,health,damage,direction){
-    this.x = x;
-    this.y = y;
+    this.sprite = new Sprite();
+    this.sprite.x = x;
+    this.sprite. y = y;
     this.movementSpeed = movementSpeed;
     this.health = health;
     this.damage = damage;
     this.direction = direction;
     this.progress = 0;
+    
+    this.sprite.collider = "k";
   }
 
-  move(){//moves and turns each enemy
-    if (this.direction === "up"){
-      this.y -= this.movementSpeed;
-    }
-    else if(this.direction === "down"){
-      this.y += this.movementSpeed;
-    }
-    else if (this.direction === "right"){
-      this.x += this.movementSpeed;
-    }
-    else if(this.direction === "left"){
-      this.x -= this.movementSpeed;
-    }
-    this.progress += this.movementSpeed;
+  moves(){//moves and turns each enemy
+    
+    this.sprite.move(this.direction,1,this.movementSpeed);
+  //   this.sprite.y -= this.movementSpeed;
+  //   if (this.direction === "up"){
+  //     this.sprite.y -= this.movementSpeed;
+  //   }
+  //   else if(this.direction === "down"){
+  //     this.sprite.y += this.movementSpeed;
+  //   }
+  //   else if (this.direction === "right"){
+  //     this.sprite.x += this.movementSpeed;
+  //   }
+  //   else if(this.direction === "left"){
+  //     this.sprite.x -= this.movementSpeed;
+  //   }
+  //   this.progress += this.movementSpeed;
   }
   Progress(){
     return this.progress;
@@ -101,10 +107,6 @@ class Enemy{
   }
   death(){//deletes enemy 
 
-  }
-  display(){
-    fill("red");
-    circle(this.x,this.y,10);
   }
   X(){
     return this.x;
@@ -116,7 +118,8 @@ class Enemy{
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-
+  let enemy1 = new Enemy(50,50,1,100,3,"right");
+  enemyAR.push(enemy1);
   bullet = new Sprite(400,400,10);
 
   bullet.color = "red";
@@ -127,31 +130,33 @@ function setup() {
 
   
 function mousePressed(){
-  bullet.moveTO(0,0,10);
-  bullet.moveTo(mouseX,mouseY,3);
+  let i = 0;
+  bullet.moveTo(0,0,10);
+  //enemyAR[i].sprite.moveTo(0,0,10)
+  //bullet.moveTo(mouseX,mouseY,3);
+  enemyAR[0].direction = "up";
 }
 
 function draw() {
   background(220);
   update();
 }
-
+let timer = 0;
 function update(){
-  for (let i = towerAR.length; i>0; i--){
+  for (let i = towerAR.length-1; i>=0; i--){
     towerAR[i].display();
   } 
-  for (let i = bulletAR.length; i >0; i--){
+  for (let i = bulletAR.length-1; i >=0; i--){
     bulletAR[i].display();
     bulletAR[i].move();
   }
-  for (let i = enemyAR.length; i >0; i--){
-    enemyAR[i].display();
-    enemyAR[i].move();
+  for (let i = enemyAR.length-1; i >= 0; i--){
+    if (timer === 0){
+      enemyAR[i].moves();
+      timer = 2;
+    }
+    else{
+      timer --;
+    }
   }
-}
-
-function trig(x1,y1,x2,y2){
-  let x = abs(x2-x1);
-  let y = abs(y2-y1);
-  let distance = x*x + y*y; 
 }
