@@ -8,6 +8,7 @@
 let towerAR = [];
 let bulletAR = [];
 let enemyAR= [];
+let bulletDAR = [];
 let bullet;
 let circles;
 
@@ -53,6 +54,7 @@ class Tower{
         bullet =new Sprite(this.x,this.y,10,"kinematics");
         bullet.moveTO(this.targetX,this.targetY,this.bulletSpeed);
         bulletAR.push(bullet);
+        bulletDAR.push(this.damage);
       }
     }
     
@@ -78,26 +80,11 @@ class Enemy{
     this.direction = direction;
     this.progress = 0;
     
-    this.sprite.collider = "k";
+    this.sprite.collider = "dynamic";
   }
 
   moves(){//moves and turns each enemy
-    
     this.sprite.move(this.direction,1,this.movementSpeed);
-  //   this.sprite.y -= this.movementSpeed;
-  //   if (this.direction === "up"){
-  //     this.sprite.y -= this.movementSpeed;
-  //   }
-  //   else if(this.direction === "down"){
-  //     this.sprite.y += this.movementSpeed;
-  //   }
-  //   else if (this.direction === "right"){
-  //     this.sprite.x += this.movementSpeed;
-  //   }
-  //   else if(this.direction === "left"){
-  //     this.sprite.x -= this.movementSpeed;
-  //   }
-  //   this.progress += this.movementSpeed;
   }
   Progress(){
     return this.progress;
@@ -107,6 +94,9 @@ class Enemy{
   }
   death(){//deletes enemy 
 
+    if(this.health <=0){
+      this.sprite.remove();
+    }
   }
   X(){
     return this.x;
@@ -114,27 +104,25 @@ class Enemy{
   Y(){
     return this.y;
   }
+  takesDamage(damageTaken){
+    this.health-=damageTaken;
+  }
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   let enemy1 = new Enemy(50,50,1,100,3,"right");
   enemyAR.push(enemy1);
-  bullet = new Sprite(400,400,10);
-
+  bullet = new Sprite(100,50,10);
+  bulletAR.push(bullet);
+  bullet.collider = "dynamic";
+  bulletDAR.push(50);
   bullet.color = "red";
-  
- 
-  
 }
 
   
 function mousePressed(){
-  let i = 0;
-  bullet.moveTo(0,0,10);
-  //enemyAR[i].sprite.moveTo(0,0,10)
-  //bullet.moveTo(mouseX,mouseY,3);
-  enemyAR[0].direction = "up";
+  
 }
 
 function draw() {
@@ -146,11 +134,8 @@ function update(){
   for (let i = towerAR.length-1; i>=0; i--){
     towerAR[i].display();
   } 
-  for (let i = bulletAR.length-1; i >=0; i--){
-    bulletAR[i].display();
-    bulletAR[i].move();
-  }
   for (let i = enemyAR.length-1; i >= 0; i--){
+    enemyAR[i].death();
     if (timer === 0){
       enemyAR[i].moves();
       timer = 2;
@@ -159,4 +144,22 @@ function update(){
       timer --;
     }
   }
+  for (let i = bulletAR.length-1; i >=0; i--){
+    for (let j = enemyAR.length-1; j >= 0; j--){
+      if(bulletAR[i].collides(enemyAR[j].sprite)){
+        enemyAR[j].takesDamage(bulletDAR[i]);
+        bulletAR[i].remove();
+        bulletDAR.splice(i,1);
+      }
+    }
+      
+  }
+
+}
+
+function placeTower(){
+
+}
+function buyMenu(){
+  
 }

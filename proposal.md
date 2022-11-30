@@ -17,6 +17,7 @@ tower defense
 3) animations 
 4) enemys with abilies
 5) more complex targeting 
+6) obsticles 
 
 
 
