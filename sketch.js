@@ -11,6 +11,10 @@ let enemyAR= [];
 let bulletDAR = [];
 let bullet;
 let circles;
+let button;
+let gamestate = "title";
+let buttonAR= [];
+
 
 class Tower{
   constructor(x,y,damage,ability,bulletSpeed,firespeed,range,color){
@@ -111,6 +115,8 @@ class Enemy{
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+
+  //temp
   let enemy1 = new Enemy(50,50,1,100,3,"right");
   enemyAR.push(enemy1);
   bullet = new Sprite(100,50,10);
@@ -118,6 +124,14 @@ function setup() {
   bullet.collider = "dynamic";
   bulletDAR.push(50);
   bullet.color = "red";
+
+  //perm
+  button = new Button(width/2,height/2,200,100,"red","blue", "game","title");//title screen button
+  buttonAR.push(button);
+  button = new Button(100,height-50,200,100,"red","blue","shop","game");//open shop button
+  buttonAR.push(button);
+  button = new Button(100,height-50,200,100,"green","orange","game","shop");
+  buttonAR.push(button);
 }
 
   
@@ -127,14 +141,23 @@ function mousePressed(){
 
 function draw() {
   background(220);
-  update();
+  if (gamestate === "game"){
+    update();
+  }
+  
+  else{
+    turnOffGame();
+  }
+  buttonsupdate();
 }
 let timer = 0;
 function update(){
   for (let i = towerAR.length-1; i>=0; i--){
+    
     towerAR[i].display();
   } 
   for (let i = enemyAR.length-1; i >= 0; i--){
+    enemyAR[i].sprite.visible = true;
     enemyAR[i].death();
     if (timer === 0){
       enemyAR[i].moves();
@@ -156,10 +179,58 @@ function update(){
   }
 
 }
+function turnOffGame(){
+  for (let i = enemyAR.length-1; i >= 0; i--){
+    enemyAR[0].sprite.visible = false;
+  }
+}
 
 function placeTower(){
 
 }
 function buyMenu(){
   
+}
+
+
+class Button{
+  constructor(x,y,width,height,color1,color2,state,display){
+    this.x = x-width/2;
+    this.y = y-height/2;
+    this.width = width;
+    this.height = height;
+    this.color1 = color1;
+    this.color2 = color2;
+    this.state = state;
+    this.displayState = display;
+  }
+
+  display(){
+    if (gamestate === this.displayState){
+      if (mouseX > this.x && mouseX < this.x +this.width && mouseY > this.y && mouseY < this.y + this.height){
+        fill(this.color1);
+  
+      }
+      else {
+        fill(this.color2);
+      }
+      rect(this.x,this.y,this.width,this.height);
+    }
+  }
+
+  clicked(){
+    if (gamestate === this.displayState){
+      if (mouseX > this.x && mouseX < this.x +this.width && mouseY > this.y && mouseY < this.y + this.height && mouseIsPressed){
+        gamestate = this.state;
+      }
+    }
+  }
+}
+
+
+function buttonsupdate(){
+  for(let i = buttonAR.length-1; i >= 0; i --){
+    buttonAR[i].display();
+    buttonAR[i].clicked();
+  }
 }
