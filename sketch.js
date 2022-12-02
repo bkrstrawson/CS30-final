@@ -189,7 +189,9 @@ function placeTower(){
 
 }
 function buyMenu(){
-  
+  if(state ==="shop"){
+    
+  }
 }
 
 
