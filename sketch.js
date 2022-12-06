@@ -12,7 +12,7 @@ let bulletDAR = [];
 let bullet;
 let circles;
 let button;
-let gamestate = "tower";
+let gamestate = "title";
 let buttonAR= [];
 let target = 0;
 
@@ -38,17 +38,19 @@ class Tower{
     this.targetX=0;
     this.targetY=0;
     for(let i = enemyAR.length-1; i >=0; i--){
-      console.log(dist(enemyAR[i].sprite.x,enemyAR[i].sprite.y,this.x,this.y));
+      //console.log(dist(enemyAR[i].sprite.x,enemyAR[i].sprite.y,this.x,this.y));
       if(dist(enemyAR[i].sprite.x,enemyAR[i].sprite.y,this.x,this.y) <= this.range){
         //if (targetprogress < enemyAR[i].Progress){
         targetprogress = enemyAR[i].Progress;
-        target = i;
+        this.targetX = enemyAR[i].sprite.x;
+        this.targetY = enemyAR[i].sprite.y;
         //}
       }
+      else {
+        this.targetX = 0;
+        this.targetY = 0;
+      }
     }
-    this.targetX = enemyAR[target].sprite.x;
-    this.targetY = enemyAR[target].sprite.y;
-
   }
   shoot(){//shoots bullet(creates a new bullet sprite)
     if(this.targetX !== 0 || this.targetY !== 0){
@@ -57,13 +59,10 @@ class Tower{
       }
       else{
         this.coolDown = this.firespeed;
-        bullet =new Sprite(this.x,this.y,10,"kinematics");
-        bullet.moveTo(this.targetX,this.targetY,this.bulletSpeed);
-        bulletAR.push(bullet);
-        bulletDAR.push(this.damage);
+
       }
     }
-    
+    new bullet
   } 
   display(){
     //image(this.imagefile,this.x,this.y)
@@ -73,8 +72,21 @@ class Tower{
 
 }
 
+class Bullet{
+  constructor(x,y,targetx,targety,damage,bulletSpeed){
+    this.x = x;
+    this.y = y;
+    this.targetx = targetx;
+    this.targety = targety;
+    this.damage = damage;
+    this.bulletSpeed = bulletSpeed;
+    this.sprite = new Sprite(this.x,this.y,10,"kinematics");
+    bullet.moveTo(this.targetx,this.targety,this.bulletSpeed);
+    bulletAR.push(bullet);
+    bulletDAR.push(this.damage);
+  }
 
-
+}
 class Enemy{
   constructor(x,y,movementSpeed,health,damage,direction){
     this.sprite = new Sprite();
@@ -102,13 +114,12 @@ class Enemy{
 
     if(this.health <=0){
       this.sprite.remove();
+      return true;
     }
-  }
-  X(){
-    return this.x;
-  }
-  Y(){
-    return this.y;
+    else{
+      return false;
+    }
+    
   }
   takesDamage(damageTaken){
     this.health-=damageTaken;
@@ -132,12 +143,15 @@ function setup() {
   buttonAR.push(button);
   button = new Button(100,height-50,200,100,"red","blue","shop","game");//open shop button
   buttonAR.push(button);
-  button = new Button(100,height-50,200,100,"green","orange","game","shop");
+  button = new Button(width-100,height-50,200,100,"green","orange","game","shop");
+  buttonAR.push(button);
+  button = new Button(width/6*2,height/6*2,200,100,"blue","red","tower","shop");
   buttonAR.push(button);
 }
 
 function draw() {
   background(220);
+  buttonsupdate();
   if (gamestate === "game"|| gamestate === "tower"){
     update();
   }
@@ -145,21 +159,26 @@ function draw() {
   else{
     turnOffGame();
   }
-  buttonsupdate();
+  
 }
 
 let timer = 0;
+
 function update(){
   for (let i = towerAR.length-1; i>=0; i--){
-    
     towerAR[i].display();
     towerAR[i].target();
     towerAR[i].shoot();
   } 
   for (let i = enemyAR.length-1; i >= 0; i--){
     enemyAR[i].sprite.visible = true;
-    enemyAR[i].death();
-    if (timer === 0){
+    if(enemyAR[i].death()){
+      enemyAR[i].death();
+      enemyAR.splice(i,1);
+    }
+      
+      
+    else if (timer === 0){
       enemyAR[i].moves();
       timer = 2;
     }
@@ -168,9 +187,8 @@ function update(){
     }
   }
   for (let i = bulletAR.length-1; i >=0; i--){
-
     for (let j = enemyAR.length-1; j >= 0; j--){
-      if(bulletAR[i].collides(enemyAR[j].sprite)){
+      if(bulletAR[i].overlaps(enemyAR[j].sprite)){
         enemyAR[j].takesDamage(bulletDAR[i]);
         bulletAR[i].remove();
         bulletDAR.splice(i,1);
@@ -182,22 +200,20 @@ function update(){
 
 function turnOffGame(){
   for (let i = enemyAR.length-1; i >= 0; i--){
-    enemyAR[0].sprite.visible = false;
+    enemyAR[i].sprite.visible = false;
   }
 }
 
 function mousePressed(){
   if (gamestate === "tower"){
-    let tower = new Tower(300,400,50,"none",3,5,20,"red");
+    let tower = new Tower(mouseX,mouseY,50,"none",3,25,200,"red");
     towerAR.push(tower);
+    gamestate = "game";
   }
-  
-}
 
-function buyMenu(){
-  // if(state ==="shop"){
-    
-  // }
+  for(let i = buttonAR.length-1; i >= 0; i --){
+    buttonAR[i].clicked();
+  }
 }
 
 
@@ -217,7 +233,6 @@ class Button{
     if (gamestate === this.displayState){
       if (mouseX > this.x && mouseX < this.x +this.width && mouseY > this.y && mouseY < this.y + this.height){
         fill(this.color1);
-  
       }
       else {
         fill(this.color2);
@@ -235,10 +250,8 @@ class Button{
   }
 }
 
-
 function buttonsupdate(){
   for(let i = buttonAR.length-1; i >= 0; i --){
     buttonAR[i].display();
-    buttonAR[i].clicked();
   }
 }

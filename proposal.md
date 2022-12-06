@@ -4,8 +4,8 @@ tower defense
 
 ## Needs to have list
 -5 levels
--10 different enemies (knights)
--10 towers (dragons)
+-6 different enemies (knights)
+-6 towers (dragons)
 -all towers target first enemy they can reach
 -shop that upgrades damage and fire speed
 -title and end screens
