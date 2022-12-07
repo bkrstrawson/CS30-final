@@ -39,16 +39,17 @@ class Tower{
     this.targetY=0;
     for(let i = enemyAR.length-1; i >=0; i--){
       //console.log(dist(enemyAR[i].sprite.x,enemyAR[i].sprite.y,this.x,this.y));
-      if(dist(enemyAR[i].sprite.x,enemyAR[i].sprite.y,this.x,this.y) <= this.range){
-        //if (targetprogress < enemyAR[i].Progress){
-        targetprogress = enemyAR[i].Progress;
-        this.targetX = enemyAR[i].sprite.x;
-        this.targetY = enemyAR[i].sprite.y;
-        //}
-      }
-      else {
-        this.targetX = 0;
-        this.targetY = 0;
+      if (targetprogress < enemyAR[i].progress){
+        if(dist(enemyAR[i].sprite.x,enemyAR[i].sprite.y,this.x,this.y) <= this.range){
+        
+          targetprogress = enemyAR[i].Progress;
+          this.targetX = enemyAR[i].sprite.x;
+          this.targetY = enemyAR[i].sprite.y;
+        }
+        else {
+          this.targetX = 0;
+          this.targetY = 0;
+        }
       }
     }
   }
@@ -59,17 +60,18 @@ class Tower{
       }
       else{
         this.coolDown = this.firespeed;
-
+        bullet = new Bullet(this.x,this.y,this.targetX,this.targetY,this.damage,this.bulletSpeed);
+        bullet.sprite.moveTo(this.targetX,this.targetY,this.bulletSpeed);
+        bulletAR.push(bullet);
       }
     }
-    new bullet
+
   } 
   display(){
     //image(this.imagefile,this.x,this.y)
     fill(this.color);
     circle(this.x,this.y,50);
   }
-
 }
 
 class Bullet{
@@ -80,13 +82,17 @@ class Bullet{
     this.targety = targety;
     this.damage = damage;
     this.bulletSpeed = bulletSpeed;
-    this.sprite = new Sprite(this.x,this.y,10,"kinematics");
-    bullet.moveTo(this.targetx,this.targety,this.bulletSpeed);
-    bulletAR.push(bullet);
-    bulletDAR.push(this.damage);
+    this.sprite = new Sprite(this.x,this.y,10,"d");
   }
 
+  removeB(){
+    if (this.sprite.x === this.targetx && this.sprite.y === this.targety){
+      this.sprite.remove();
+      return true;
+    }
+  }
 }
+
 class Enemy{
   constructor(x,y,movementSpeed,health,damage,direction){
     this.sprite = new Sprite();
@@ -97,15 +103,20 @@ class Enemy{
     this.damage = damage;
     this.direction = direction;
     this.progress = 0;
-    
-    this.sprite.collider = "dynamic";
+    this.timer = 0;
+    this.sprite.collider = "k";
   }
 
   moves(){//moves and turns each enemy
-    this.sprite.move(this.direction,1,this.movementSpeed);
-  }
-  Progress(){
-    return this.progress;
+    if(this.timer ===0){
+      this.sprite.move(this.direction,1,this.movementSpeed);
+      this.timer = 2;
+    }
+  
+    else{
+      this.timer --;
+    }
+    this.progress += this.movementSpeed;
   }
   switchDirection(){//switches direction when hit a wall
 
@@ -116,10 +127,6 @@ class Enemy{
       this.sprite.remove();
       return true;
     }
-    else{
-      return false;
-    }
-    
   }
   takesDamage(damageTaken){
     this.health-=damageTaken;
@@ -132,11 +139,6 @@ function setup() {
   //temp
   let enemy1 = new Enemy(50,50,1,100,3,"right");
   enemyAR.push(enemy1);
-  // bullet = new Sprite(100,50,10);
-  // bulletAR.push(bullet);
-  // bullet.collider = "dynamic";
-  // bulletDAR.push(50);
-  // bullet.color = "red";
 
   //perm
   button = new Button(width/2,height/2,200,100,"red","blue", "game","title");//title screen button
@@ -159,7 +161,6 @@ function draw() {
   else{
     turnOffGame();
   }
-  
 }
 
 let timer = 0;
@@ -175,26 +176,24 @@ function update(){
     if(enemyAR[i].death()){
       enemyAR[i].death();
       enemyAR.splice(i,1);
-    }
-      
-      
-    else if (timer === 0){
-      enemyAR[i].moves();
-      timer = 2;
-    }
-    else{
-      timer --;
+    }  
+    else{ 
+    enemyAR[i].moves();
     }
   }
+  console.log(enemyAR.length)
   for (let i = bulletAR.length-1; i >=0; i--){
     for (let j = enemyAR.length-1; j >= 0; j--){
-      if(bulletAR[i].overlaps(enemyAR[j].sprite)){
-        enemyAR[j].takesDamage(bulletDAR[i]);
-        bulletAR[i].remove();
-        bulletDAR.splice(i,1);
+      if(bulletAR[i].sprite.overlaps(enemyAR[j].sprite)){
+        enemyAR[j].takesDamage(bulletAR[i].damage);
+        bulletAR[i].sprite.remove();
+        bulletAR.splice(i,1)
       }
     }
-      
+    if(bulletAR[i].removeB()){
+      bulletAR[i].removeB();
+      bulletAR.splice(i,1);
+    }
   }
 }
 
@@ -214,6 +213,8 @@ function mousePressed(){
   for(let i = buttonAR.length-1; i >= 0; i --){
     buttonAR[i].clicked();
   }
+  let enemy1 = new Enemy(50,50,3,100,3,"right");
+  enemyAR.push(enemy1);
 }
 
 
