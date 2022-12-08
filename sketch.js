@@ -82,7 +82,7 @@ class Bullet{
     this.targety = targety;
     this.damage = damage;
     this.bulletSpeed = bulletSpeed;
-    this.sprite = new Sprite(this.x,this.y,10,"d");
+    this.sprite = new Sprite(this.x,this.y,10,"k");
   }
 
   removeB(){
@@ -137,8 +137,8 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
 
   //temp
-  let enemy1 = new Enemy(50,50,1,100,3,"right");
-  enemyAR.push(enemy1);
+  // let enemy1 = new Enemy(50,50,1,100,3,"right");
+  // enemyAR.push(enemy1);
 
   //perm
   button = new Button(width/2,height/2,200,100,"red","blue", "game","title");//title screen button
@@ -178,22 +178,23 @@ function update(){
       enemyAR.splice(i,1);
     }  
     else{ 
-    enemyAR[i].moves();
+      enemyAR[i].moves();
     }
   }
-  console.log(enemyAR.length)
   for (let i = bulletAR.length-1; i >=0; i--){
     for (let j = enemyAR.length-1; j >= 0; j--){
       if(bulletAR[i].sprite.overlaps(enemyAR[j].sprite)){
         enemyAR[j].takesDamage(bulletAR[i].damage);
         bulletAR[i].sprite.remove();
-        bulletAR.splice(i,1)
+        bulletAR.splice(i,1);
       }
     }
-    if(bulletAR[i].removeB()){
-      bulletAR[i].removeB();
-      bulletAR.splice(i,1);
-    }
+  }
+    for (let i = bulletAR.length-1; i >=0; i--){
+     if(bulletAR[i].removeB()){
+       bulletAR[i].removeB();
+       bulletAR.splice(i,1);
+     }
   }
 }
 
