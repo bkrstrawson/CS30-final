@@ -190,11 +190,11 @@ function update(){
       }
     }
   }
-    for (let i = bulletAR.length-1; i >=0; i--){
-     if(bulletAR[i].removeB()){
-       bulletAR[i].removeB();
-       bulletAR.splice(i,1);
-     }
+  for (let i = bulletAR.length-1; i >=0; i--){
+    if(bulletAR[i].removeB()){
+      bulletAR[i].removeB();
+      bulletAR.splice(i,1);
+    }
   }
 }
 
