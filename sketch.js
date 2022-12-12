@@ -82,14 +82,11 @@ class Bullet{
     this.targety = targety;
     this.damage = damage;
     this.bulletSpeed = bulletSpeed;
-    this.sprite = new Sprite(this.x,this.y,10,"k");
-  }
+    this.sprite = new Sprite(this.x,this.y,10,"d");
 
+  }
   removeB(){
-    if (this.sprite.x === this.targetx && this.sprite.y === this.targety){
-      this.sprite.remove();
-      return true;
-    }
+    this.sprite.remove();
   }
 }
 
@@ -120,13 +117,6 @@ class Enemy{
   }
   switchDirection(){//switches direction when hit a wall
 
-  }
-  death(){//deletes enemy 
-
-    if(this.health <=0){
-      this.sprite.remove();
-      return true;
-    }
   }
   takesDamage(damageTaken){
     this.health-=damageTaken;
@@ -166,23 +156,15 @@ function draw() {
 let timer = 0;
 
 function update(){
-  for (let i = towerAR.length-1; i>=0; i--){
+  for (let i = towerAR.length-1; i>=0; i--){ // tower shooting
     towerAR[i].display();
     towerAR[i].target();
     towerAR[i].shoot();
   } 
-  for (let i = enemyAR.length-1; i >= 0; i--){
-    enemyAR[i].sprite.visible = true;
-    if(enemyAR[i].death()){
-      enemyAR[i].death();
-      enemyAR.splice(i,1);
-    }  
-    else{ 
-      enemyAR[i].moves();
-    }
-  }
-  for (let i = bulletAR.length-1; i >=0; i--){
-    for (let j = enemyAR.length-1; j >= 0; j--){
+
+  for (let j = enemyAR.length-1; j >= 0; j--){
+    for (let i = bulletAR.length-1; i >=0; i--){ // bullets
+    
       if(bulletAR[i].sprite.overlaps(enemyAR[j].sprite)){
         enemyAR[j].takesDamage(bulletAR[i].damage);
         bulletAR[i].sprite.remove();
@@ -190,9 +172,22 @@ function update(){
       }
     }
   }
-  for (let i = bulletAR.length-1; i >=0; i--){
-    if(bulletAR[i].removeB()){
-      bulletAR[i].removeB();
+
+  for (let i = enemyAR.length-1; i >= 0; i--){ // enemy death & movement
+    enemyAR[i].sprite.visible = true;
+    if(enemyAR[i].health <= 0){
+      enemyAR[i].sprite.remove();
+      enemyAR.splice(i,1);
+    }  
+    else{ 
+      enemyAR[i].moves();
+    }
+  }
+
+
+  for (let i = bulletAR.length-1; i >=0; i--){ // bullet removing
+    if (bulletAR[i].sprite.x === bulletAR[i].targetx && bulletAR[i].sprite.y === bulletAR[i].targety){
+      bulletAR[i].sprite.remove();
       bulletAR.splice(i,1);
     }
   }
@@ -201,6 +196,12 @@ function update(){
 function turnOffGame(){
   for (let i = enemyAR.length-1; i >= 0; i--){
     enemyAR[i].sprite.visible = false;
+  }
+  for (let i = bulletAR.length-1; i >=0; i--){ // bullet removing
+    if (bulletAR[i].sprite.x === bulletAR[i].targetx && bulletAR[i].sprite.y === bulletAR[i].targety){
+      bulletAR[i].sprite.remove();
+      bulletAR.splice(i,1);
+    }
   }
 }
 
