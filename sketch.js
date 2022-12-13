@@ -38,10 +38,9 @@ class Tower{
     this.targetX=0;
     this.targetY=0;
     for(let i = enemyAR.length-1; i >=0; i--){
-      //console.log(dist(enemyAR[i].sprite.x,enemyAR[i].sprite.y,this.x,this.y));
       if (targetprogress < enemyAR[i].progress){
         if(dist(enemyAR[i].sprite.x,enemyAR[i].sprite.y,this.x,this.y) <= this.range){
-        
+        target = i
           targetprogress = enemyAR[i].Progress;
           this.targetX = enemyAR[i].sprite.x;
           this.targetY = enemyAR[i].sprite.y;
@@ -52,6 +51,7 @@ class Tower{
         }
       }
     }
+    console.log(target)
   }
   shoot(){//shoots bullet(creates a new bullet sprite)
     if(this.targetX !== 0 || this.targetY !== 0){
@@ -82,7 +82,7 @@ class Bullet{
     this.targety = targety;
     this.damage = damage;
     this.bulletSpeed = bulletSpeed;
-    this.sprite = new Sprite(this.x,this.y,10,"d");
+    this.sprite = new Sprite(this.x,this.y,10,"k");
 
   }
   removeB(){
@@ -164,7 +164,6 @@ function update(){
 
   for (let j = enemyAR.length-1; j >= 0; j--){
     for (let i = bulletAR.length-1; i >=0; i--){ // bullets
-    
       if(bulletAR[i].sprite.overlaps(enemyAR[j].sprite)){
         enemyAR[j].takesDamage(bulletAR[i].damage);
         bulletAR[i].sprite.remove();
