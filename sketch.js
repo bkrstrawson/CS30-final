@@ -38,20 +38,22 @@ class Tower{
     this.targetX=0;
     this.targetY=0;
     for(let i = enemyAR.length-1; i >=0; i--){
+      if(dist(enemyAR[i].sprite.x,enemyAR[i].sprite.y,this.x,this.y) <= this.range){
       if (targetprogress < enemyAR[i].progress){
-        if(dist(enemyAR[i].sprite.x,enemyAR[i].sprite.y,this.x,this.y) <= this.range){
-        target = i
-          targetprogress = enemyAR[i].Progress;
+       
+          target = i;
+          targetprogress = enemyAR[i].progress;
           this.targetX = enemyAR[i].sprite.x;
           this.targetY = enemyAR[i].sprite.y;
         }
         else {
           this.targetX = 0;
           this.targetY = 0;
+          target = "penis"
         }
       }
     }
-    console.log(target)
+    console.log(target);
   }
   shoot(){//shoots bullet(creates a new bullet sprite)
     if(this.targetX !== 0 || this.targetY !== 0){
@@ -180,6 +182,7 @@ function update(){
     }  
     else{ 
       enemyAR[i].moves();
+      console.log(enemyAR[i].progress+ "   " +i);
     }
   }
 
