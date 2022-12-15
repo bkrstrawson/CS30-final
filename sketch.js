@@ -49,7 +49,7 @@ class Tower{
         else {
           this.targetX = 0;
           this.targetY = 0;
-          target = "penis"
+          target = "yes"
         }
       }
     }
