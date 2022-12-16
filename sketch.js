@@ -39,8 +39,7 @@ class Tower{
     this.targetY=0;
     for(let i = enemyAR.length-1; i >=0; i--){
       if(dist(enemyAR[i].sprite.x,enemyAR[i].sprite.y,this.x,this.y) <= this.range){
-      if (targetprogress < enemyAR[i].progress){
-       
+        if (targetprogress < enemyAR[i].progress){
           target = i;
           targetprogress = enemyAR[i].progress;
           this.targetX = enemyAR[i].sprite.x;
@@ -49,7 +48,7 @@ class Tower{
         else {
           this.targetX = 0;
           this.targetY = 0;
-          target = "yes"
+          target = "yes";
         }
       }
     }
@@ -84,7 +83,7 @@ class Bullet{
     this.targety = targety;
     this.damage = damage;
     this.bulletSpeed = bulletSpeed;
-    this.sprite = new Sprite(this.x,this.y,10,"k");
+    this.sprite = new Sprite(this.x,this.y,10,"d");
 
   }
   removeB(){
@@ -182,7 +181,7 @@ function update(){
     }  
     else{ 
       enemyAR[i].moves();
-      //cole.log(enemyAR[i].progress+ "   " +i);
+      //console.log(enemyAR[i].progress+ "   " +i);
     }
   }
 
