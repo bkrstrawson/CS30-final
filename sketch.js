@@ -53,7 +53,7 @@ class Tower{
         }
       }
     }
-    console.log(target);
+    //console.log(target);
   }
   shoot(){//shoots bullet(creates a new bullet sprite)
     if(this.targetX !== 0 || this.targetY !== 0){
@@ -182,7 +182,7 @@ function update(){
     }  
     else{ 
       enemyAR[i].moves();
-      console.log(enemyAR[i].progress+ "   " +i);
+      //cole.log(enemyAR[i].progress+ "   " +i);
     }
   }
 
