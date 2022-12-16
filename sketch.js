@@ -42,6 +42,7 @@ class Tower{
         if (targetprogress < enemyAR[i].progress){
           target = i;
           targetprogress = enemyAR[i].progress;
+          
           this.targetX = enemyAR[i].sprite.x;
           this.targetY = enemyAR[i].sprite.y;
         }
@@ -52,22 +53,24 @@ class Tower{
         }
       }
     }
-    //console.log(target);
+    
   }
   shoot(){//shoots bullet(creates a new bullet sprite)
     if(this.targetX !== 0 || this.targetY !== 0){
-      if (this.coolDown !==0){
-        this.coolDown--;
-      }
-      else{
+      
+      if (this.coolDown ===0){
         this.coolDown = this.firespeed;
         bullet = new Bullet(this.x,this.y,this.targetX,this.targetY,this.damage,this.bulletSpeed);
         bullet.sprite.moveTo(this.targetX,this.targetY,this.bulletSpeed);
         bulletAR.push(bullet);
+        
       }
-    }
-
-  } 
+      else{
+        this.coolDown--;
+      }
+      
+    } 
+  }
   display(){
     //image(this.imagefile,this.x,this.y)
     fill(this.color);
@@ -153,8 +156,6 @@ function draw() {
     turnOffGame();
   }
 }
-
-let timer = 0;
 
 function update(){
   for (let i = towerAR.length-1; i>=0; i--){ // tower shooting
