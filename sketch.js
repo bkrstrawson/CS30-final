@@ -31,18 +31,18 @@ class Tower{
     this.color = color;
     this.targetX;
     this.targetY;
+    this.targetprogress = 0;
   }
 
   target(){//decides what enemy to shoot at and prompts the shoot
-    let targetprogress = 0;
+    this.targetprogress = 0;
     this.targetX=0;
     this.targetY=0;
     for(let i = enemyAR.length-1; i >=0; i--){
       if(dist(enemyAR[i].sprite.x,enemyAR[i].sprite.y,this.x,this.y) <= this.range){
-        if (targetprogress < enemyAR[i].progress){
+        if (this.targetprogress < enemyAR[i].progress){
           target = i;
-          targetprogress = enemyAR[i].progress;
-          
+          this.targetprogress = enemyAR[i].progress;
           this.targetX = enemyAR[i].sprite.x;
           this.targetY = enemyAR[i].sprite.y;
         }
