@@ -39,9 +39,10 @@ class Tower{
     this.targetX=0;
     this.targetY=0;
     for(let i = enemyAR.length-1; i >=0; i--){
-      if(dist(enemyAR[i].sprite.x,enemyAR[i].sprite.y,this.x,this.y) <= this.range){
-        if (this.targetprogress < enemyAR[i].progress){
+      if(dist(enemyAR[i].sprite.x,enemyAR[i].sprite.y,this.x,this.y) <= this.range/2){
+        if (this.targetprogress <= enemyAR[i].progress){
           target = i;
+          
           this.targetprogress = enemyAR[i].progress;
           this.targetX = enemyAR[i].sprite.x;
           this.targetY = enemyAR[i].sprite.y;
@@ -53,7 +54,6 @@ class Tower{
         }
       }
     }
-    
   }
   shoot(){//shoots bullet(creates a new bullet sprite)
     if(this.targetX !== 0 || this.targetY !== 0){
@@ -73,8 +73,11 @@ class Tower{
   }
   display(){
     //image(this.imagefile,this.x,this.y)
+    fill(100,0,0,100);
+    circle(this.x,this.y,this.range);
     fill(this.color);
     circle(this.x,this.y,50);
+
   }
 }
 
@@ -128,7 +131,9 @@ class Enemy{
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  console.log(windowWidth)
+  console.log(windowHeight)
+  createCanvas(1550, 780);
 
   //temp
   // let enemy1 = new Enemy(50,50,1,100,3,"right");
@@ -209,7 +214,7 @@ function turnOffGame(){
 
 function mousePressed(){
   if (gamestate === "tower"){
-    let tower = new Tower(mouseX,mouseY,50,"none",3,25,200,"red");
+    let tower = new Tower(mouseX,mouseY,50,"none",9,25,500,"red");
     towerAR.push(tower);
     gamestate = "game";
   }
