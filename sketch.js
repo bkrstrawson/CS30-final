@@ -15,7 +15,12 @@ let button;
 let gamestate = "title";
 let buttonAR= [];
 let target = 0;
+let movePoints = [{x:1475,y:75},{x:1475,y:705},{x:75,y:705}];
+let index,levels,levelname,level;
 
+function proload(){
+  levels = loadStrings("levels/levels");
+}
 
 class Tower{
   constructor(x,y,damage,ability,bulletSpeed,firespeed,range,color){
@@ -109,21 +114,14 @@ class Enemy{
     this.progress = 0;
     this.timer = 0;
     this.sprite.collider = "k";
+    this.n = 0
   }
 
   moves(){//moves and turns each enemy
-    if(this.timer ===0){
-      this.sprite.move(this.direction,1,this.movementSpeed);
-      this.timer = 2;
-    }
-  
-    else{
-      this.timer --;
-    }
-    this.progress += this.movementSpeed;
+    this.sprite.moveTo(movePoints[n],this.movementSpeed)
   }
   switchDirection(){//switches direction when hit a wall
-
+    if(this.x === move)
   }
   takesDamage(damageTaken){
     this.health-=damageTaken;
@@ -131,8 +129,6 @@ class Enemy{
 }
 
 function setup() {
-  console.log(windowWidth)
-  console.log(windowHeight)
   createCanvas(1550, 780);
 
   //temp
@@ -185,10 +181,6 @@ function update(){
       enemyAR[i].sprite.remove();
       enemyAR.splice(i,1);
     }  
-    else{ 
-      enemyAR[i].moves();
-      //console.log(enemyAR[i].progress+ "   " +i);
-    }
   }
 
 
@@ -222,8 +214,12 @@ function mousePressed(){
   for(let i = buttonAR.length-1; i >= 0; i --){
     buttonAR[i].clicked();
   }
-  let enemy1 = new Enemy(50,50,3,100,3,"right");
+  let enemy1 = new Enemy(50,75,10,100,3,"right");
+  enemy1.moves()
   enemyAR.push(enemy1);
+
+  console.log(mouseX + " " + mouseY);
+
 }
 
 
@@ -264,4 +260,11 @@ function buttonsupdate(){
   for(let i = buttonAR.length-1; i >= 0; i --){
     buttonAR[i].display();
   }
+}
+
+function doLevels(name){//uday sandhu code that i borrowed i am very thankful  // uses level.txt as an index for the levels and then sets grid to equal a saved grid with the base level
+  index = levels.indexOf(name);
+  levelname = levels[index];
+  level = loadJSON("levels/" + levelname +".json");
+  movePoints = level;
 }
