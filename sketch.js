@@ -15,8 +15,9 @@ let button;
 let gamestate = "title";
 let buttonAR= [];
 let target = 0;
-let movePoints = [{x:1475,y:75},{x:1475,y:705},{x:75,y:705}];
+let movePoints = [{x:1475,y:75},{x:1475,y:705},{x:75,y:705}, {x:75, y:400}, {x:1600, y:400}];
 let index,levels,levelname,level;
+let wallHealth = 2000;
 
 function proload(){
   levels = loadStrings("levels/levels");
@@ -114,14 +115,24 @@ class Enemy{
     this.progress = 0;
     this.timer = 0;
     this.sprite.collider = "k";
-    this.n = 0
+    this.n = 0;
+    this.sprite.moveTo(movePoints[0],this.movementSpeed/5);
   }
 
   moves(){//moves and turns each enemy
-    this.sprite.moveTo(movePoints[n],this.movementSpeed)
+    
   }
   switchDirection(){//switches direction when hit a wall
-    if(this.x === move)
+    if(this.sprite.x === movePoints[this.n].x && this.sprite.y === movePoints[this.n].y){
+      this.n += 1;
+      if (!movePoints[this.n]){
+        enemyFinish(this.damage);
+        this.health = 0;
+      }
+      else{
+        this.sprite.moveTo(movePoints[this.n],this.movementSpeed/5);
+      }
+    }
   }
   takesDamage(damageTaken){
     this.health-=damageTaken;
@@ -177,10 +188,13 @@ function update(){
 
   for (let i = enemyAR.length-1; i >= 0; i--){ // enemy death & movement
     enemyAR[i].sprite.visible = true;
+    enemyAR[i].switchDirection();
     if(enemyAR[i].health <= 0){
       enemyAR[i].sprite.remove();
       enemyAR.splice(i,1);
+      
     }  
+    
   }
 
 
@@ -215,7 +229,7 @@ function mousePressed(){
     buttonAR[i].clicked();
   }
   let enemy1 = new Enemy(50,75,10,100,3,"right");
-  enemy1.moves()
+  enemy1.moves();
   enemyAR.push(enemy1);
 
   console.log(mouseX + " " + mouseY);
@@ -267,4 +281,8 @@ function doLevels(name){//uday sandhu code that i borrowed i am very thankful  /
   levelname = levels[index];
   level = loadJSON("levels/" + levelname +".json");
   movePoints = level;
+}
+
+function enemyFinish(damage){
+  wallHealth -= damage;
 }
