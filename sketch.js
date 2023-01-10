@@ -15,9 +15,12 @@ let button;
 let gamestate = "title";
 let buttonAR= [];
 let target = 0;
-let movePoints = [{x:1475,y:75},{x:1475,y:705},{x:75,y:705}, {x:75, y:400}, {x:1600, y:400}];
+let movePoints = [{x:-50, y:75},{x:1475,y:75},{x:1475,y:705},{x:75,y:705}, {x:75, y:400}, {x:1600, y:400}];
 let index,levels,levelname,level;
 let wallHealth = 2000;
+let paths = [];
+let previousState = "none";
+let temptower;
 
 function proload(){
   levels = loadStrings("levels/levels");
@@ -79,7 +82,7 @@ class Tower{
   }
   display(){
     //image(this.imagefile,this.x,this.y)
-    fill(100,0,0,100);
+    fill(128,128,128,100);
     circle(this.x,this.y,this.range);
     fill(this.color);
     circle(this.x,this.y,50);
@@ -145,6 +148,7 @@ function setup() {
   //temp
   // let enemy1 = new Enemy(50,50,1,100,3,"right");
   // enemyAR.push(enemy1);
+  drawPaths();
 
   //perm
   button = new Button(width/2,height/2,200,100,"red","blue", "game","title");//title screen button
@@ -160,13 +164,18 @@ function setup() {
 function draw() {
   background(220);
   buttonsupdate();
-  if (gamestate === "game"|| gamestate === "tower"){
+  if (gamestate === "game"){
     update();
   }
   
+  else if(gamestate === "tower"){
+    update();
+    displayTower();
+  }
   else{
     turnOffGame();
   }
+  previousState = gamestate;
 }
 
 function update(){
@@ -218,17 +227,31 @@ function turnOffGame(){
   }
 }
 
+function displayTower(){// potentailly monkey code
+  if (previousState === "shop"){
+    temptower = new Tower(mouseX,mouseY,50,"none",9,25,500,"red");
+    
+  }
+  temptower.x = mouseX;
+  temptower.y = mouseY;
+  temptower.display();
+  
+}
+
 function mousePressed(){
   if (gamestate === "tower"){
-    let tower = new Tower(mouseX,mouseY,50,"none",9,25,500,"red");
-    towerAR.push(tower);
-    gamestate = "game";
+    for (let i = 0; i > paths.length; i ++){
+      if temptower.
+    }
+    // let tower = new Tower(mouseX,mouseY,50,"none",9,25,500,"red");
+    // towerAR.push(tower);
+    // gamestate = "game";
   }
 
   for(let i = buttonAR.length-1; i >= 0; i --){
     buttonAR[i].clicked();
   }
-  let enemy1 = new Enemy(50,75,10,100,3,"right");
+  let enemy1 = new Enemy(movePoints[0].x,movePoints[0].y,10,100,3,"right");
   enemy1.moves();
   enemyAR.push(enemy1);
 
@@ -285,4 +308,42 @@ function doLevels(name){//uday sandhu code that i borrowed i am very thankful  /
 
 function enemyFinish(damage){
   wallHealth -= damage;
+}
+
+function drawPaths(){
+  for (let i = 0; i < movePoints.length-1; i ++){
+    let path = new Sprite;
+    let c = color(128,128,128);
+    noStroke();
+    path.color = c;
+    path.w = 65;
+    path.h = 65;
+    if (movePoints[i].x === movePoints[i+1].x){
+      path.x = movePoints[i].x;
+    }
+    else{
+      if (movePoints[i].x > movePoints[i+1].x){
+        path.x = movePoints[i].x - dist(movePoints[i].x,movePoints[i].y,movePoints[i+1].x,movePoints[i+1].y)/2;
+      }
+      else{
+        path.x = movePoints[i].x + dist(movePoints[i].x,movePoints[i].y,movePoints[i+1].x,movePoints[i+1].y)/2;
+      }
+      path.w =  dist(movePoints[i].x,movePoints[i].y,movePoints[i+1].x,movePoints[i+1].y)+65;
+    }
+
+    if (movePoints[i].y === movePoints[i+1].y){
+      path.y = movePoints[i].y;
+    }
+    else{
+      if(movePoints[i].y > movePoints[i+1].y){
+        path.y = movePoints[i].y - dist(movePoints[i].x,movePoints[i].y,movePoints[i+1].x,movePoints[i+1].y)/2;
+      }
+      else{
+        path.y = movePoints[i].y + dist(movePoints[i].x,movePoints[i].y,movePoints[i+1].x,movePoints[i+1].y)/2;
+      }
+      path.h =  dist(movePoints[i].x,movePoints[i].y,movePoints[i+1].x,movePoints[i+1].y)+65;
+    }
+    path.collider = "n";
+    paths.push(path);
+  }
 }

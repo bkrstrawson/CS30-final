@@ -47,6 +47,7 @@
       "no-unused-vars": "off"
     },
     "globals": {
+      "Group":true,
       "moveTo":true,
       "mouse":true,
       "Sprite":true,
