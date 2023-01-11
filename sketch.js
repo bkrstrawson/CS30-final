@@ -41,6 +41,10 @@ class Tower{
     this.targetX;
     this.targetY;
     this.targetprogress = 0;
+    this.sprite = new Sprite(this.x,this.y,50);
+    this.sprite.color = this.color;
+    this.sprite.collider = "d";
+    
   }
 
   target(){//decides what enemy to shoot at and prompts the shoot
@@ -82,10 +86,8 @@ class Tower{
   }
   display(){
     //image(this.imagefile,this.x,this.y)
-    fill(128,128,128,100);
-    circle(this.x,this.y,this.range);
-    fill(this.color);
-    circle(this.x,this.y,50);
+    this.sprite.x = this.x;
+    this.sprite.y = this.y;
 
   }
 }
@@ -226,7 +228,7 @@ function turnOffGame(){
     }
   }
 }
-
+let pathCollide = false;
 function displayTower(){// potentailly monkey code
   if (previousState === "shop"){
     temptower = new Tower(mouseX,mouseY,50,"none",9,25,500,"red");
@@ -235,13 +237,30 @@ function displayTower(){// potentailly monkey code
   temptower.x = mouseX;
   temptower.y = mouseY;
   temptower.display();
-  
+  pathCollide = false;
+  for (let i = 0; i < paths.length; i ++){
+    console.log(temptower.sprite.overlapping(paths[3]) > 0 && !pathCollide);
+    if (temptower.sprite.overlapping(paths[i])){
+      //console.log("on path");
+      fill(255,0,0,100);
+      circle(temptower.x, temptower.y,temptower.range); 
+      pathCollide = true;
+    }
+    else{
+      fill(128,128,128,100);
+      circle(temptower.x, temptower.y,temptower.range);
+      //console.log("not on path");
+    }
+  }
 }
-
 function mousePressed(){
   if (gamestate === "tower"){
-    for (let i = 0; i > paths.length; i ++){
-      if temptower.
+    for (let i = 0; i < paths.length; i ++){
+      if (temptower.sprite.overlapping(paths[i])){
+        towerAR.push(temptower);
+        temptower = "none";
+        gamestate = "game";
+      }
     }
     // let tower = new Tower(mouseX,mouseY,50,"none",9,25,500,"red");
     // towerAR.push(tower);
@@ -254,9 +273,6 @@ function mousePressed(){
   let enemy1 = new Enemy(movePoints[0].x,movePoints[0].y,10,100,3,"right");
   enemy1.moves();
   enemyAR.push(enemy1);
-
-  console.log(mouseX + " " + mouseY);
-
 }
 
 
@@ -343,7 +359,7 @@ function drawPaths(){
       }
       path.h =  dist(movePoints[i].x,movePoints[i].y,movePoints[i+1].x,movePoints[i+1].y)+65;
     }
-    path.collider = "n";
+    path.collider = "k";
     paths.push(path);
   }
 }
