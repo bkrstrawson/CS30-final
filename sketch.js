@@ -21,6 +21,8 @@ let wallHealth = 2000;
 let paths = [];
 let previousState = "none";
 let temptower;
+let sometime = 0;
+let money = 0;
 
 function proload(){
   levels = loadStrings("levels/levels");
@@ -43,7 +45,7 @@ class Tower{
     this.targetprogress = 0;
     this.sprite = new Sprite(this.x,this.y,50);
     this.sprite.color = this.color;
-    this.sprite.collider = "d";
+    this.sprite.collider = "k";
     
   }
 
@@ -67,7 +69,10 @@ class Tower{
         }
       }
     }
+    console.log(this.targetX + "x");
+    console.log(this.targetY + "y");
   }
+
   shoot(){//shoots bullet(creates a new bullet sprite)
     if(this.targetX !== 0 || this.targetY !== 0){
       
@@ -109,14 +114,13 @@ class Bullet{
 }
 
 class Enemy{
-  constructor(x,y,movementSpeed,health,damage,direction){
+  constructor(x,y,movementSpeed,health,damage){
     this.sprite = new Sprite();
     this.sprite.x = x;
-    this.sprite. y = y;
+    this.sprite.y = y;
     this.movementSpeed = movementSpeed;
     this.health = health;
     this.damage = damage;
-    this.direction = direction;
     this.progress = 0;
     this.timer = 0;
     this.sprite.collider = "k";
@@ -124,9 +128,6 @@ class Enemy{
     this.sprite.moveTo(movePoints[0],this.movementSpeed/5);
   }
 
-  moves(){//moves and turns each enemy
-    
-  }
   switchDirection(){//switches direction when hit a wall
     if(this.sprite.x === movePoints[this.n].x && this.sprite.y === movePoints[this.n].y){
       this.n += 1;
@@ -137,7 +138,11 @@ class Enemy{
       else{
         this.sprite.moveTo(movePoints[this.n],this.movementSpeed/5);
       }
+
     }
+    console.log(this.sprite.x + "ex")
+    console.log(this.sprite.y + "ey")
+    this.progress+= this.movementSpeed;
   }
   takesDamage(damageTaken){
     this.health-=damageTaken;
@@ -151,15 +156,17 @@ function setup() {
   // let enemy1 = new Enemy(50,50,1,100,3,"right");
   // enemyAR.push(enemy1);
   drawPaths();
+  let enemy1 = new Enemy(movePoints[0].x,movePoints[0].y,10,1000,3);
+  enemyAR.push(enemy1);
 
   //perm
-  button = new Button(width/2,height/2,200,100,"red","blue", "game","title");//title screen button
+  button = new Button(width/2,height/2,200,100,"red","blue", "game","title","start");//title screen button
   buttonAR.push(button);
-  button = new Button(100,height-50,200,100,"red","blue","shop","game");//open shop button
+  button = new Button(100,height-50,200,100,"red","blue","shop","game","shop");//open shop button
   buttonAR.push(button);
-  button = new Button(width-100,height-50,200,100,"green","orange","game","shop");
+  button = new Button(width-100,height-50,200,100,"green","orange","game","shop","back");//back
   buttonAR.push(button);
-  button = new Button(width/6*2,height/6*2,200,100,"blue","red","tower","shop");
+  button = new Button(width/6*2,height/6*2,200,100,"blue","red","tower","shop","tower 1");//buy tower 1
   buttonAR.push(button);
 }
 
@@ -169,14 +176,19 @@ function draw() {
   buttonsupdate();
   if (gamestate === "game"){
     update();
+    perSecond();
+    showpaths();
   }
   
   else if(gamestate === "tower"){
     update();
     displayTower();
+    perSecond();
+    showpaths();
   }
   else{
     turnOffGame();
+    hidepaths();
   }
   previousState = gamestate;
 }
@@ -209,7 +221,6 @@ function update(){
     
   }
 
-
   for (let i = bulletAR.length-1; i >=0; i--){ // bullet removing
     if (bulletAR[i].sprite.x === bulletAR[i].targetx && bulletAR[i].sprite.y === bulletAR[i].targety){
       bulletAR[i].sprite.remove();
@@ -229,6 +240,7 @@ function turnOffGame(){
     }
   }
 }
+
 let pathCollide = false;
 function displayTower(){// potentailly monkey code
   if (previousState === "shop"){
@@ -238,47 +250,45 @@ function displayTower(){// potentailly monkey code
   temptower.y = mouseY;
   temptower.display();
   pathCollide = false;
-  for (let i = 0; i < paths.length; i ++){
-    console.log(temptower.sprite.overlapping(paths[3]) > 0 && !pathCollide);
-    if (temptower.sprite.overlapping(paths[i]) > 0 && !pathCollide){
-      //console.log("on path");
-      fill(255,0,0,100);
-      circle(temptower.x, temptower.y, temptower.range); 
-      pathCollide = true;
-    }
-  }
-  if (!pathCollide){
-    fill(128,128,128,100);
-    circle(temptower.x, temptower.y,temptower.range);
-    //console.log("not on path");
-  }
+  // for (let i = 0; i < paths.length; i ++){
+  //   console.log(temptower.sprite.overlapping(paths[3]) > 0 && !pathCollide);
+  //   if (temptower.sprite.overlapping(paths[i]) > 0 && !pathCollide){
+  //     //console.log("on path");
+  //     fill(255,0,0,100);
+  //     circle(temptower.x, temptower.y, temptower.range); 
+  //     pathCollide = true;
+  //   }
+  // }
+  // if (!pathCollide){
+  //   fill(128,128,128,100);
+  //   circle(temptower.x, temptower.y,temptower.range);
+  //   //console.log("not on path");
+  // }
 }
 
 function mousePressed(){
   if (gamestate === "tower"){
-    for (let i = 0; i < paths.length; i ++){
-      if (temptower.sprite.overlapping(paths[i])){
-        towerAR.push(temptower);
-        temptower = "none";
-        gamestate = "game";
-      }
-    }
-    // let tower = new Tower(mouseX,mouseY,50,"none",9,25,500,"red");
-    // towerAR.push(tower);
+    // for (let i = 0; i < paths.length; i ++){
+    // if (temptower.sprite.overlapping(paths[i])){
+    // towerAR.push(temptower);
+    // temptower = "none";
     // gamestate = "game";
+    //}
+    //}
+    let tower = new Tower(mouseX,mouseY,50,"none",9,25,500,"red");
+    towerAR.push(tower);
+    gamestate = "game";
   }
 
   for(let i = buttonAR.length-1; i >= 0; i --){
     buttonAR[i].clicked();
   }
-  let enemy1 = new Enemy(movePoints[0].x,movePoints[0].y,10,100,3,"right");
-  enemy1.moves();
-  enemyAR.push(enemy1);
+ 
 }
 
 
 class Button{
-  constructor(x,y,width,height,color1,color2,state,display){
+  constructor(x,y,width,height,color1,color2,state,display,text){
     this.x = x-width/2;
     this.y = y-height/2;
     this.width = width;
@@ -287,6 +297,7 @@ class Button{
     this.color2 = color2;
     this.state = state;
     this.displayState = display;
+    this.text = text;
   }
 
   display(){
@@ -298,6 +309,9 @@ class Button{
         fill(this.color2);
       }
       rect(this.x,this.y,this.width,this.height);
+      fill("black");
+      textSize(40);
+      text(this.text,this.x+this.width/2,this.y+this.height/2);
     }
   }
 
@@ -360,8 +374,28 @@ function drawPaths(){
       }
       path.h =  dist(movePoints[i].x,movePoints[i].y,movePoints[i+1].x,movePoints[i+1].y)+65;
     }
-    path.collider = "k";
+    path.collider = "n";
     path.layer = 1;
+    path.visible = false;
     paths.push(path);
+  }
+}
+function showpaths(){
+  for (let i = paths.length-1; i >=0; i--){
+    paths[i].visible = true;
+  }
+}
+
+function hidepaths(){
+  for (let i = paths.length-1;i >=0; i--){
+    paths[i].visible = false;
+  }
+}
+
+function perSecond(){//happens 1 time per second
+  if (millis() >=sometime){
+    money += 5;
+    sometime = millis() +1000;
+    
   }
 }
