@@ -15,12 +15,12 @@ let button;
 let gamestate = "title";
 let buttonAR= [];
 let target = 0;
-let movePoints = [{x:-50, y:700},{x:400,y:700},{x:400, y:75},{x:1000,y:75},{x:1000,y:600},{x:1475, y:600},{x:1475,y:-50}]
-let level1 = [{x:-50, y:75},{x:1475,y:75},{x:1475,y:705},{x:75,y:705}, {x:75, y:400}, {x:1600, y:400}];
-let level2 = [{x:-50, y:700},{x:400,y:700},{x:400, y:75},{x:1000,y:75},{x:1000,y:600},{x:1475, y:600},{x:1475,y:-50}]
-let level3 = [{x:200,y:820}, {x:200,y:75},{x:1475, y:75}, {x:1475,y:820}]
-let level4 = [{x:175, y:-20}, {x:175, y:390}, {x:1575, y:390}]
-let level5 = [{x:-20, y:390}, {x:1575, y:390}]
+let movePoints = 0;
+let level1 = [{x:-50, y:100},{x:1475,y:100},{x:1475,y:705},{x:275,y:705}, {x:275, y:400}, {x:1600, y:400}];
+let level2 = [{x:-50, y:600},{x:400,y:600},{x:400, y:75},{x:1000,y:75},{x:1000,y:600},{x:1475, y:600},{x:1475,y:-50}];
+let level3 = [{x:275,y:820}, {x:275,y:75},{x:1475, y:75}, {x:1475,y:820}];
+let level4 = [{x:175, y:-20}, {x:175, y:390}, {x:1575, y:390}];
+let level5 = [{x:-20, y:390}, {x:1575, y:390}];
 let index,levels,levelname,level;
 let wallHealth = 2000;
 let paths = [];
@@ -29,9 +29,17 @@ let temptower;
 let sometime = 0;
 let money = 500;
 
-function proload(){
-  levels = loadStrings("levels/levels");
-}
+let enemy; 
+let e1; 
+let e2;
+let e3;
+let e4;
+let e5;
+let e6;
+let boss;
+let waveDone = true;
+let sometime2 = 0;
+let wave = 1;
 
 class Tower{
   constructor(x,y,damage,price,bulletSpeed,firespeed,range,color){
@@ -41,7 +49,7 @@ class Tower{
     this. damage = damage;
     this.firespeed = firespeed;
     this.coolDown = 0;
-    this.price = price
+    this.price = price;
     this.range = range;
     //this.imagefile = imagefile
     this.color = color;
@@ -50,7 +58,7 @@ class Tower{
     this.targetprogress = 0;
     this.sprite = new Sprite(this.x,this.y,50);
     this.sprite.color = this.color;
-    this.sprite.collider = "k";
+    this.sprite.collider = "n";
     
   }
 
@@ -89,7 +97,7 @@ class Tower{
         
       }
       else{
-        this.coolDown--
+        this.coolDown--;
       }
       
     } 
@@ -131,7 +139,7 @@ class Enemy{
     this.sprite.collider = "k";
     this.n = 0;
     this.sprite.moveTo(movePoints[0],this.movementSpeed/5);
-    this.money = money
+    this.money = money;
   }
 
   switchDirection(){//switches direction when hit a wall
@@ -158,16 +166,22 @@ class Enemy{
 function setup() {
   createCanvas(1550, 780);
 
-  //temp
-  // let enemy1 = new Enemy(50,50,1,100,3,"right");
-  // enemyAR.push(enemy1);
-  drawPaths();
-  let enemy1 = new Enemy(movePoints[0].x,movePoints[0].y,10,1000,3,1000);
-  enemyAR.push(enemy1);
-
   //perm
-  button = new Button(width/2,height/2,200,100,"red","blue", "game","title","start");//title screen button
+  button = new Button(width/2,height/2,200,100,"red","blue", "level","title","start");//title screen button
   buttonAR.push(button);
+  button = new Button(387,100,200,100,"red","blue", "level1","level","level 1");//title screen button
+  buttonAR.push(button);
+  button = new Button(775,100,200,100,"red","blue", "level2","level","level 2");//title screen button
+  buttonAR.push(button);
+  button = new Button(387,250,200,100,"red","blue", "level3","level","level 3");//title screen button
+  buttonAR.push(button);
+  button = new Button(775,250,200,100,"red","blue", "level4","level","level 4");//title screen button
+  buttonAR.push(button);
+  button = new Button(width/2,400,200,100,"red","blue", "level5","level","level 5");//title screen button
+  buttonAR.push(button);
+
+
+
   button = new Button(100,height-50,200,100,"red","blue","shop","game","shop");//open shop button
   buttonAR.push(button);
   button = new Button(width-100,height-50,200,100,"green","orange","game","shop","back");//back
@@ -193,6 +207,8 @@ function draw() {
   if (gamestate === "game"){
     update();
     showpaths();
+    makeWave();
+    spawnWaves();
   }
   else if(gamestate === "tower"){
     update();
@@ -200,22 +216,34 @@ function draw() {
     showpaths();
   }
   else if( gamestate[2] ==="w"){
-    checkTower()
+    checkTower();
   }
-
   else{
     turnOffGame();
     hidepaths();
   }
-  if (gamestate !== "title"){
-    displayMoney()
+  if (gamestate !== "title" && gamestate !== "end"){
+    displayMoney();
     perSecond();
   }
+  else if (gamestate === "end"){
+    turnOffGame();
+    hidepaths();
+    endScreen();
+  }
+  if (gamestate === "level"){
+    levelSelect();
+  }
+  else if(gamestate[2] === "v"){
+    doLevels();
+  }
+  
   previousState = gamestate;
 }
 
 function update(){
   for (let i = towerAR.length-1; i>=0; i--){ // tower shooting
+    towerAR[i].sprite.visible = true;
     towerAR[i].display();
     towerAR[i].target();
     towerAR[i].shoot();
@@ -235,7 +263,7 @@ function update(){
     enemyAR[i].sprite.visible = true;
     enemyAR[i].switchDirection();
     if(enemyAR[i].health <= 0){
-      money += enemyAR[i].money
+      money += enemyAR[i].money;
       enemyAR[i].sprite.remove();
       enemyAR.splice(i,1);
       
@@ -254,6 +282,9 @@ function update(){
 function turnOffGame(){
   for (let i = enemyAR.length-1; i >= 0; i--){
     enemyAR[i].sprite.visible = false;
+  }
+  for (let i = towerAR.length-1; i >= 0; i --){
+    towerAR[i].sprite.visible = false;
   }
   for (let i = bulletAR.length-1; i >=0; i--){ // bullet removing
     if (bulletAR[i].sprite.x === bulletAR[i].targetx && bulletAR[i].sprite.y === bulletAR[i].targety){
@@ -290,10 +321,10 @@ function mousePressed(){
     if(money >= temptower.price){
     // for (let i = 0; i < paths.length; i ++){
     // if (temptower.sprite.overlapping(paths[i])){
-     towerAR.push(temptower);
-     money -= temptower.price
-     temptower = "none";
-     gamestate = "game";
+      towerAR.push(temptower);
+      money -= temptower.price;
+      temptower = "none";
+      gamestate = "game";
      
     }
     //}
@@ -334,7 +365,7 @@ class Button{
       rect(this.x,this.y,this.width,this.height);
       fill("black");
       textSize(40);
-      text(this.text,this.x+this.width/2,this.y+this.height/2);
+      text(this.text,this.x+this.width/2-textWidth(this.text)/2,this.y+this.height/2);
     }
   }
 
@@ -351,13 +382,6 @@ function buttonsupdate(){
   for(let i = buttonAR.length-1; i >= 0; i --){
     buttonAR[i].display();
   }
-}
-
-function doLevels(name){//uday sandhu code that i borrowed i am very thankful  // uses level.txt as an index for the levels and then sets grid to equal a saved grid with the base level
-  index = levels.indexOf(name);
-  levelname = levels[index];
-  level = loadJSON("levels/" + levelname +".json");
-  movePoints = level;
 }
 
 function enemyFinish(damage){
@@ -417,41 +441,213 @@ function hidepaths(){
 
 function perSecond(){//happens 1 time per second
   if (millis() >=sometime){
-    money += 5;
     sometime = millis() +1000;
+    if(gamestate ==="game" || gamestate ==="tower"){
+      money += 5;
+    }
   }
 }
 function displayMoney(){
-  fill(255)
-    textSize(32);
-    rect(0,0,textWidth(money)+75,65);
-    stroke(0);
-    fill(0);
-    textSize(8);
-    textSize(32);
-    text(money, 10, 35);
-    fill("white"); 
-    //image(imgBanana,textWidth(banana1)+20,0,50,50);
-  }
+  fill(255);
+  textSize(32);
+  rect(0,0,textWidth(money)+75,65);
+  stroke(0);
+  fill(0);
+  textSize(8);
+  textSize(32);
+  text(money, 10, 35);
+  fill("white"); 
+}
 
-  function checkTower(){
-    if(gamestate === "tower1"){// cheap tower, slow firing, mid damage, kid range,
-      temptower = new Tower(mouseX,mouseY, 15, 50, 8,20,400,"blue")
+function checkTower(){
+  if(gamestate === "tower1"){// cheap tower, slow firing, mid damage, kid range,
+    if (money >= 50){
+      temptower = new Tower(mouseX,mouseY, 15, 50, 8,20,400,"blue");
+      gamestate = "tower";
     }
-    else if (gamestate === "tower2"){//more expensive, faster firing, mid damge, higher range
-      temptower = new Tower(mouseX,mouseY,20, 100, 10, 25,500,"green")
+    else{
+      gamestate = "shop";
     }
-    else if (gamestate === "tower3"){// high damge slow firing 
-      temptower = new Tower(mouseX,mouseY,50,250,8,10,500,"red")
-    }
-    else if(gamestate === "tower4"){// low damge high fire speed
-      temptower = new Tower(mouseX,mouseY, 5,250,12,5,500,"orange")
-    }
-    else if (gamestate === "tower5"){//super tower
-      temptower = new Tower(mouseX,mouseY,40,500,12,12,600,"purple")
-    }
-    else if(gamestate === "tower6"){// one shot man
-      temptower = new Tower(mouseX,mouseY, 10000,500, 12,1000,400,"black")
-    }
-    gamestate = "tower"
   }
+  else if (gamestate === "tower2"){//more expensive, faster firing, mid damge, higher range
+    if(money >=100){
+      temptower = new Tower(mouseX,mouseY,20, 100, 10, 25,500,"green");
+      gamestate = "tower";
+    }
+    else{
+      gamestate = "shop";
+    }
+  }
+  else if (gamestate === "tower3"){// high damge slow firing 
+    if (money >= 250){
+      temptower = new Tower(mouseX,mouseY,50,250,8,10,500,"red");
+      gamestate = "tower";
+    }
+    else{
+      gamestate = "shop";
+    }
+  }
+  else if(gamestate === "tower4"){// low damge high fire speed
+    if(money >= 250){
+      temptower = new Tower(mouseX,mouseY, 5,250,12,5,500,"orange");
+      gamestate = "tower";
+    }
+    else{
+      gamestate = "shop";
+    }
+  }
+  else if (gamestate === "tower5"){//super tower
+    if (money >= 500){
+      temptower = new Tower(mouseX,mouseY,40,500,12,12,600,"purple");
+      gamestate = "tower";
+    }
+    else{
+      gamestate = "shop";
+    }
+  }
+  else if(gamestate === "tower6"){// one shot man
+    if (money >= 500){
+      temptower = new Tower(mouseX,mouseY, 10000,500, 12,1000,400,"black");
+      gamestate = "tower";
+    }
+    else{
+      gamestate = "shop";
+    }
+  }
+}
+
+function makeWave(){
+  if (gamestate === "game" && waveDone){
+    if (wave ===1){
+      createWaves(10,0,0,0,0,0,0);
+    }
+    else if (wave === 2){
+      createWaves(20,0,0,0,0,0,0);
+    }
+    else if(wave ===3){
+      createWaves(10,5,0,0,0,0,0);
+    }
+    else if (wave ===4){
+      createWaves(15,10,0,0,0,0,0);
+    }
+    else if (wave === 5){
+      createWaves(5,5,10,0,0,0,0);
+    }
+    else if(wave ===6){
+      createWaves(10,5,10,5,0,0,0);
+    }
+    else if (wave ===7){
+      createWaves(25,0,0,0,1,0,0);
+    }
+    else if (wave === 8){
+      createWaves(10,10,5,5,5,0,0);
+    }
+    else if(wave ===9){
+      createWaves(10,5,10,0,0,10,0);
+    }
+    else if (wave ===10){
+      createWaves(50,0,0,0,0,0,0);
+    }
+    else if (wave === 11){
+      createWaves(15,10,10,10,10,10,0);
+    }
+    else if(wave ===12){
+      createWaves(15,5,10,20,10,5,0);
+    }
+    else if (wave ===13){// boss
+      createWaves(0,0,0,0,0,0,1);
+    }
+  }
+}
+function createWaves(en1,en2,en3,en4,en5,en6,en7){
+  e1 = en1;
+  e2 = en2;
+  e3 = en3;
+  e4 = en4;
+  e5 = en5;
+  e6 = en6; 
+  boss = en7;
+  waveDone = false;
+}
+
+
+function spawnWaves(){
+  if (millis() - sometime2 > 800){
+    console.log("yes");
+    sometime2 = millis();
+    if (e1 > 0){
+      enemy = new Enemy(movePoints[0].x,movePoints[0].y,7,50,5,50);//basic enemy
+      enemyAR.push(enemy);
+      e1--;
+    }
+    else  if (e2 > 0){
+      enemy = new Enemy(movePoints[0].x,movePoints[0].y,10,100,100,100);//faster higher health enemy
+      enemyAR.push(enemy);
+      e2 --;
+    }
+    else  if (e3 > 0){
+      enemy = new Enemy(movePoints[0].x,movePoints[0].y,15,150,150,150);//faster w the same health
+      enemyAR.push(enemy);
+      e3--;
+    }
+    else  if (e4 > 0){
+      enemy = new Enemy(movePoints[0].x,movePoints[0].y,10,300,150,150);//slower enemy with more health
+      enemyAR.push(enemy);
+      e4--;
+    }
+    else  if (e5 > 0){
+      enemy = new Enemy(movePoints[0].x,movePoints[0].y,5,800,300,300);// even slower with more health
+      enemyAR.push(enemy);
+      e5--;
+    }
+    else  if (e6 > 0){
+      enemy = new Enemy(movePoints[0].x,movePoints[0].y,15,300,300,300);// faster with some health
+      enemyAR.push(enemy);
+      e6--;
+    } 
+    else  if (boss > 0){
+      enemy = new Enemy(movePoints[0].x,movePoints[0].y,1,1000,600,600);// boss, super slow lots of health
+      enemyAR.push(enemy);
+      boss --;
+    }
+    else if (enemyAR.length === 0){
+      waveDone = true;
+      wave ++;
+      if (wave === 14){
+        gamestate = "end";
+      }
+    }
+  }
+}
+
+function endScreen(){
+  text("GOOD JOB YOU WIN!!!", width/2, height/2);
+}
+
+function doLevels(){
+  if (gamestate ==="level1"){
+    movePoints = level1;
+    gamestate = "game";
+  }
+  else if (gamestate ==="level2"){
+    movePoints = level2;
+    gamestate = "game";
+  }
+  else if (gamestate ==="level3"){
+    movePoints = level3;
+    gamestate = "game";
+  }
+  else if (gamestate ==="level4"){
+    movePoints = level4;
+    gamestate = "game";
+  }
+  else if (gamestate ==="level5"){
+    movePoints = level5;
+    gamestate = "game";
+  }
+  drawPaths();
+}
+
+function levelSelect(){
+
+}
