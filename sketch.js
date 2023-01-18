@@ -16,13 +16,13 @@ let gamestate = "title";
 let buttonAR= [];
 let target = 0;
 let movePoints = 0;
-let level1 = [{x:-50, y:100},{x:1475,y:100},{x:1475,y:705},{x:275,y:705}, {x:275, y:400}, {x:1600, y:400}];
+let level1 = [{x:-50, y:120},{x:1475,y:120},{x:1475,y:705},{x:275,y:705}, {x:275, y:400}, {x:1600, y:400}];
 let level2 = [{x:-50, y:600},{x:400,y:600},{x:400, y:75},{x:1000,y:75},{x:1000,y:600},{x:1475, y:600},{x:1475,y:-50}];
 let level3 = [{x:275,y:820}, {x:275,y:75},{x:1475, y:75}, {x:1475,y:820}];
 let level4 = [{x:175, y:-20}, {x:175, y:390}, {x:1575, y:390}];
 let level5 = [{x:-20, y:390}, {x:1575, y:390}];
 let index,levels,levelname,level;
-let wallHealth = 2000;
+let Health = 2000;
 let paths = [];
 let previousState = "none";
 let temptower;
@@ -70,16 +70,16 @@ class Tower{
       if(dist(enemyAR[i].sprite.x,enemyAR[i].sprite.y,this.x,this.y) <= this.range/2){
         if (this.targetprogress <= enemyAR[i].progress){
           target = i;
-          
           this.targetprogress = enemyAR[i].progress;
           this.targetX = enemyAR[i].sprite.x;
           this.targetY = enemyAR[i].sprite.y;
         }
-        else {
-          this.targetX = 0;
-          this.targetY = 0;
-          target = "yes";
-        }
+      }
+      else {
+        this.targetX = 0;
+        this.targetY = 0;
+        target = "yes";
+        
       }
     }
     //console.log(this.targetX + "x");
@@ -94,14 +94,14 @@ class Tower{
         bullet = new Bullet(this.x,this.y,this.targetX,this.targetY,this.damage,this.bulletSpeed);
         bullet.sprite.moveTo(this.targetX,this.targetY,this.bulletSpeed);
         bulletAR.push(bullet);
-        
+        this.coolDown--;
       }
       else{
         this.coolDown--;
       }
-      
     } 
   }
+
   display(){
     //image(this.imagefile,this.x,this.y)
     this.sprite.x = this.x;
@@ -192,7 +192,7 @@ function setup() {
   buttonAR.push(button);
   button = new Button(387,250,200,100,"blue","red","tower3","shop","tower 3");//buy tower 3
   buttonAR.push(button);
-  button = new Button(775,250,200,100,"blue","red","tower4","shop","towe r4");//buy tower 4
+  button = new Button(775,250,200,100,"blue","red","tower4","shop","tower 4");//buy tower 4
   buttonAR.push(button);
   button = new Button(387,400,200,100,"blue","red","tower5","shop","tower 5");//buy tower 5
   buttonAR.push(button);
@@ -224,6 +224,7 @@ function draw() {
   }
   if (gamestate !== "title" && gamestate !== "end"){
     displayMoney();
+    displayHealth();
     perSecond();
   }
   else if (gamestate === "end"){
@@ -385,7 +386,7 @@ function buttonsupdate(){
 }
 
 function enemyFinish(damage){
-  wallHealth -= damage;
+  Health -= damage;
 }
 
 function drawPaths(){
@@ -450,12 +451,26 @@ function perSecond(){//happens 1 time per second
 function displayMoney(){
   fill(255);
   textSize(32);
-  rect(0,0,textWidth(money)+75,65);
+  rect(0,0,textWidth(money)+75,75);
   stroke(0);
   fill(0);
   textSize(8);
   textSize(32);
   text(money, 10, 35);
+  text("Money" ,10, 65);
+  fill("white"); 
+}
+
+function displayHealth(){
+  fill(255);
+  textSize(32);
+  rect(1550-textWidth(Health)-65,0,textWidth(Health)+75,75);
+  stroke(0);
+  fill(0);
+  textSize(8);
+  textSize(32);
+  text(Health, 1450, 35);
+  text("Health" ,1450, 65);
   fill("white"); 
 }
 
