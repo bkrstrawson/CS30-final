@@ -196,7 +196,7 @@ function setup() {
   buttonAR.push(button);
   button = new Button(387,400,200,100,"blue","red","tower5","shop","tower 5");//buy tower 5
   buttonAR.push(button);
-  button = new Button(775, 400,200,100,"blue","red","tower6","shop","tower6");//buy tower 6
+  button = new Button(775, 400,200,100,"blue","red","tower6","shop","tower 6");//buy tower 6
   buttonAR.push(button);
 }
 
