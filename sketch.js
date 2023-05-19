@@ -5,6 +5,7 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 //p5.play
+//targetting
 
 
 let towerAR = [];
@@ -521,7 +522,7 @@ function checkTower(){// makes the towers
       gamestate = "shop";
     }
   }
-  
+
   else if(gamestate === "tower6"){// one shot man
     if (money >= 500){
       temptower = new Tower(mouseX,mouseY, 10000,500, 12,1000,400,"black");
